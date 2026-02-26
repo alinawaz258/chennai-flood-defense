@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chennai Flood Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button { background: #0078D7; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #005a9e; }
+    </style>
+</head>
+<body>
+
+    <h1>Chennai Flood Defense Dashboard</h1>
+
+    <div class="card">
+        <h2>1. AI Flood Prediction</h2>
+        <p>Simulate 120mm rainfall in Guindy:</p>
+        <button onclick="checkFloodRisk()">Run AI Prediction</button>
+        <p><strong>Status:</strong> <span id="flood-result">Waiting...</span></p>
+    </div>
+
+    <div class="card">
+        <h2>2. Dynamic Routing</h2>
+        <p>Find safe route from T_Nagar to Velachery (assuming Guindy is flooded):</p>
+        <button onclick="getSafeRoute()">Calculate Route</button>
+        <p><strong>Route:</strong> <span id="route-result">Waiting...</span></p>
+    </div>
+
+    <script>
+        async function checkFloodRisk() {
+            const response = await fetch('http://127.0.0.1:8000/predict_flood', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rainfall_mm: 120, soil_moisture: 95, drain_capacity: 10 })
+            });
+            const data = await response.json();
+            document.getElementById('flood-result').innerText = data.ward_status || data.error;
+            if (data.ward_status === 'Flooded') document.getElementById('flood-result').style.color = 'red';
+        }
+
+        async function getSafeRoute() {
+            const response = await fetch('http://127.0.0.1:8000/safe_route', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start: "T_Nagar", destination: "Velachery", flooded_areas: ["Guindy"] })
+            });
+            const data = await response.json();
+            document.getElementById('route-result').innerText = data.safe_route ? data.safe_route.join(" ➔ ") : data.error;
+        }
+    </script>
+</body>
+</html>
