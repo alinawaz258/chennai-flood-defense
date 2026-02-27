@@ -1,6 +1,9 @@
 fastapi
-uvicorn
-scikit-learn
+uvicorn[standard]
 pandas
+numpy
 networkx
-joblib
+scipy
+google-cloud-bigquery
+google-auth
+pydantic
