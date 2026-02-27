@@ -31,7 +31,7 @@
 
     <script>
         async function checkFloodRisk() {
-            const response = await fetch('http://127.0.0.1:8000/predict_flood', {
+            const response = await fetch('https://redesigned-fishstick-wr7pj6vjgprrc9p66-5500.app.github.dev/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ rainfall_mm: 120, soil_moisture: 95, drain_capacity: 10 })
@@ -42,7 +42,7 @@
         }
 
         async function getSafeRoute() {
-            const response = await fetch('http://127.0.0.1:8000/safe_route', {
+            const response = await fetch('https://redesigned-fishstick-wr7pj6vjgprrc9p66-5500.app.github.dev/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ start: "T_Nagar", destination: "Velachery", flooded_areas: ["Guindy"] })
