@@ -1,18 +1,75 @@
-# Chennai Flood Defense System 🌊
-Built for the AMD Slingshot Hackathon.
+# Chennai Urban Flood Defense System
 
-## Overview
-An AI-powered urban flood management system for Chennai. It uses predictive modeling to forecast waterlogging, dynamic graph routing to redirect traffic away from flooded zones, and simulated edge-IoT sensors for automated water removal.
+## Project Structure
 
-## Tech Stack
-* **Backend:** FastAPI, Python
-* **AI/ML:** Scikit-Learn (Random Forest), Pandas
-* **Routing:** NetworkX
-* **Frontend:** HTML, Vanilla JS
+```text
+chennai-flood-defense/
+├── backend/
+│   ├── app/
+│   │   ├── core/config.py
+│   │   ├── models/schemas.py
+│   │   └── services/
+│   │       ├── bigquery_service.py
+│   │       ├── clearance_service.py
+│   │       ├── deployment_service.py
+│   │       ├── risk_engine.py
+│   │       ├── routing_service.py
+│   │       └── system_service.py
+│   ├── main.py
+│   └── run_forecast.py
+├── frontend/index.html
+├── sql/rainfall_forecast_timesfm.sql
+├── requirements.txt
+└── README.md
+```
 
-## How to Run Locally
-1. Clone the repository.
-2. Install dependencies: `pip install -r requirements.txt`
-3. Train the model: `python ml_models/train_flood_model.py`
-4. Start the backend server: `uvicorn backend.main:app --reload`
-5. Open `frontend/index.html` in your browser.
+## Setup
+
+1. Install dependencies.
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Configure environment variables.
+   ```bash
+   export PROJECT_ID="<gcp-project-id>"
+   export DATASET_ID="chennai_flood"
+   export RAINFALL_TABLE="rainfall_history"
+   export ZONES_TABLE="zones"
+   export GCP_CREDENTIALS_PATH="/path/to/service-account.json"
+   ```
+3. Run backend.
+   ```bash
+   uvicorn backend.main:app --reload
+   ```
+4. Open frontend.
+   ```bash
+   python3 -m http.server 8080 --directory frontend
+   ```
+   Browse to `http://127.0.0.1:8080`.
+
+## GCP Free Tier Configuration
+
+1. Create project and enable APIs: BigQuery API, BigQuery ML, Vertex AI API.
+2. Keep usage within free tier by using:
+   - BigQuery sandbox/free query limits.
+   - BigQuery ML pre-trained `timesfm_model` via `AI.FORECAST` (no custom training).
+3. Create service account with roles:
+   - BigQuery Data Viewer
+   - BigQuery Job User
+4. Save service account key JSON locally and set `GCP_CREDENTIALS_PATH`.
+5. Create dataset and tables:
+   - `chennai_flood.rainfall_history(timestamp TIMESTAMP, rainfall_mm FLOAT64)`
+   - `chennai_flood.zones(zone_id STRING, elevation FLOAT64, drainage_capacity FLOAT64, population_density FLOAT64, road_importance_score FLOAT64)`
+
+## API Endpoints
+
+- `GET /forecast`
+- `GET /forecast/sql`
+- `GET /zones`
+- `POST /route`
+- `POST /deploy`
+- `POST /simulate`
+
+## BigQuery SQL (TimesFM)
+
+`sql/rainfall_forecast_timesfm.sql` contains the production query for 7-day rainfall forecasting using `AI.FORECAST`.
